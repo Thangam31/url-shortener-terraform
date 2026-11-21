@@ -1,4 +1,4 @@
-﻿# ---------- App Security Group ----------
+# ---------- App Security Group ----------
 resource "aws_security_group" "app" {
   name        = "${var.project_name}-app-sg"
   description = "Security group for app instances"
@@ -65,10 +65,11 @@ resource "aws_launch_template" "app" {
 
   user_data = base64encode(<<-EOF
     #!/bin/bash
-    dnf install -y nginx
-    systemctl enable --now nginx
-    echo '{"status":"ok","time":"'$(date -Iseconds)'"}' > /usr/share/nginx/html/health
-    echo 'URL Shortener API - healthy' > /usr/share/nginx/html/index.html
+    dnf install -y docker
+    systemctl enable --now docker
+    sleep 5
+    docker pull srimathi31/url-shortener:v1
+    docker run -d -p 80:8080 --name shortener --restart always srimathi31/url-shortener:v1
   EOF
   )
 
@@ -83,11 +84,11 @@ resource "aws_launch_template" "app" {
 
 # ---------- Auto Scaling Group ----------
 resource "aws_autoscaling_group" "app" {
-  name                = "${var.project_name}-asg"
-  vpc_zone_identifier = var.app_subnet_ids
-  target_group_arns   = [var.target_group_arn]
-  health_check_type   = "ELB"
-  health_check_grace_period = 120
+  name                      = "${var.project_name}-asg"
+  vpc_zone_identifier       = var.app_subnet_ids
+  target_group_arns         = [var.target_group_arn]
+  health_check_type         = "ELB"
+  health_check_grace_period = 300
 
   min_size         = 1
   max_size         = 2
@@ -104,6 +105,8 @@ resource "aws_autoscaling_group" "app" {
     propagate_at_launch = true
   }
 }
+
+
 
 
 

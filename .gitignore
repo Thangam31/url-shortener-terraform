@@ -1,9 +1,8 @@
-# Terraform
+﻿# Terraform
 .terraform/
 *.tfstate
 *.tfstate.*
 *.tfstate.backup
-.terraform.lock.hcl
 crash.log
 *.tfvars
 override.tf
@@ -18,3 +17,4 @@ Thumbs.db
 
 # Stray text files
 *.txt
+tfplan

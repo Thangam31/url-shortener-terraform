@@ -1,4 +1,4 @@
-﻿# ---------- ALB Security Group ----------
+# ---------- ALB Security Group ----------
 resource "aws_security_group" "alb" {
   name        = "${var.project_name}-alb-sg"
   description = "Security group for ALB"
